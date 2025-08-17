@@ -1,5 +1,5 @@
 
-Blog de Autos: Motor sin Límites
+Blog de Autos: Motor sin Límites 
 ​Proyecto de blog web desarrollado con el framework Django para la promoción y publicación de artículos sobre vehículos. Esta aplicación permite a los usuarios interactuar con el contenido a través de posts, comentarios y un sistema de autenticación de perfiles.
 
 Tecnologías Utilizadas
