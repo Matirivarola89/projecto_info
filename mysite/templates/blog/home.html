@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<style>
+  .btn-custom {
+    background-color: #c4dafa;
+    color: black;
+    border: none;
+  }
+
+  .btn-custom:hover {
+    background-color: #84b6f4;
+    color: #ffffff;
+  }
+
+  
+  .card-header {
+    background-color: #4d82bc;
+    color: #ffffff;
+  }
+
+  .btn-outline-custom {
+    color: black;
+    border: 2px solid #c4dafa;
+    background-color: transparent;
+  }
+
+  .btn-outline-custom:hover {
+    background-color: #84b6f4;
+    color: white;
+  }
+
+  
+</style>
+
+
+<div class="row">
+    <div class="col-md-8">
+        <h1>Últimos Artículos</h1>
+        {% for post in posts %}
+            <div class="card mb-4">
+                {% if post.imagen_destacada %}
+                    <img src="{{ post.imagen_destacada.url }}" class="card-img-top" alt="{{ post.titulo }}" style="max-height: 300px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h2 class="card-title"><a href="{% url 'blog:post_detail' pk=post.pk %}" class="text-decoration-none text-dark">{{ post.titulo }}</a></h2>
+                    <p class="card-text text-muted">
+                        Publicado por <a href="#" class="text-danger">{{ post.autor.username }}</a> el {{ post.fecha_publicacion|date:"d M, Y" }}
+                        {% if post.categoria %}, en <span class="badge bg-secondary">{{ post.categoria.nombre }}</span>{% endif %}
+                    </p>
+                    <p class="card-text">{{ post.contenido|truncatechars:200 }}</p>
+                    <a href="{% url 'blog:post_detail' pk=post.pk %}" class="btn btn-custom">Leer más &rarr;</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>No hay artículos para mostrar.</p>
+        {% endfor %}
+
+        {% if is_paginated %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+                {% endif %}
+                {% for i in paginator.page_range %}
+                    {% if page_obj.number == i %}
+                        <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <div class="card my-4">
+            <h5 class="card-header">Categorías</h5>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ul class="list-unstyled mb-0">
+                            {% for categoria in categorias %}
+                                <li>
+                                    <a href="{% url 'blog:home' %}?categoria={{ categoria.nombre }}" class="text-dark">{{ categoria.nombre }} </a>
+                                </li>
+                            {% endfor %}
+                            <li><a href="{% url 'blog:home' %}" class="text-dark">Todas</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card my-4">
+            <h5 class="card-header">Filtrar por Fecha</h5>
+            <div class="card-body">
+                <form method="get" action="{% url 'blog:home' %}">
+                    <div class="mb-3">
+                        <label for="fecha" class="form-label">Seleccionar Fecha:</label>
+                        <input type="date" class="form-control" id="fecha" name="fecha" value="{{ request.GET.fecha }}">
+                    </div>
+                    <button type="submit" class="btn btn-custom btn-sm">Filtrar</button>
+                    {% if request.GET.fecha %}<a href="{% url 'blog:home' %}" class="btn btn-outline-secondary btn-sm ms-2">Borrar Filtro</a>{% endif %}
+                </form>
+            </div>
+        </div>
+
+        
+
+        <div class="card my-4">
+            <h5 class="card-header">Ordenar por Comentarios</h5>
+            <div class="card-body">
+                <a href="{% url 'blog:home' %}?ordenar_comentarios=desc" class="btn btn-sm btn-outline-custom mb-2">Más Comentados</a>
+                <a href="{% url 'blog:home' %}?ordenar_comentarios=asc" class="btn btn-sm btn-outline-custom mb-2">Menos Comentados</a>
+                <a href="{% url 'blog:home' %}" class="btn btn-sm btn-outline-secondary mb-2">Quitar Orden</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

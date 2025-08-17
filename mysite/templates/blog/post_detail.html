@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ post.titulo }}{% endblock %}
+
+{% block content %}
+<style>
+  
+  
+  .card-header {
+    background-color: #4d82bc;
+    color: #ffffff;
+  }
+
+  .btn-custom {
+        background-color: #4d82bc;
+        color: #ffffff;
+        border: none;
+    }
+
+    .btn-custom:hover {
+        background-color: #9ab4ff;
+        color: #ffffff;
+    }
+
+  
+</style>
+<div class="row">
+    <div class="col-lg-8">
+        <article>
+            <header class="mb-4">
+                <h1 class="fw-bolder mb-1">{{ post.titulo }}</h1>
+                <div class="text-muted fst-italic mb-2">
+                    Publicado el {{ post.fecha_publicacion|date:"d M, Y" }} por {{ post.autor.username }}
+                    {% if post.categoria %}, en <span class="badge bg-secondary">{{ post.categoria.nombre }}</span>{% endif %}
+                </div>
+                {% if user.is_authenticated %}
+                    {% if user == post.autor or user.is_superuser %}
+                        <div class="my-3">
+                            <a href="{% url 'blog:post_update' pk=post.pk %}" class="btn btn-warning btn-sm">Editar Post</a>
+                            <a href="{% url 'blog:post_delete' pk=post.pk %}" class="btn btn-danger btn-sm">Eliminar Post</a>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </header>
+            {% if post.imagen_destacada %}
+                <figure class="mb-4"><img class="img-fluid rounded" src="{{ post.imagen_destacada.url }}" alt="{{ post.titulo }}" /></figure>
+            {% endif %}
+            <section class="mb-5">
+                <p class="fs-5 mb-4">{{ post.contenido|linebreaksbr }}</p>
+            </section>
+        </article>
+
+        <section class="mb-5">
+            <div class="card bg-light">
+                <div class="card-body">
+                    {% if user.is_authenticated %}
+                    <h5 class="card-title">Deja un comentario:</h5>
+                    <form class="mb-4" action="{% url 'blog:add_comment_to_post' pk=post.pk %}" method="post">
+                        {% csrf_token %}
+                        {{ comment_form.contenido|as_crispy_field }}
+                        <button class="btn btn-custom mt-2" type="submit">Enviar</button>
+                    </form>
+                    {% else %}
+                    <p class="text-center">Debes <a href="{% url 'login' %}">iniciar sesión</a> para comentar.</p>
+                    {% endif %}
+
+                    <h5 class="card-title mt-4">Comentarios ({{ comentarios.count }})</h5>
+                    {% for comentario in comentarios %}
+                    <div class="d-flex mb-4">
+                        <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                        <div class="ms-3">
+                            <div class="fw-bold">{{ comentario.autor.username }} <small class="text-muted ms-2">{{ comentario.fecha_creacion|date:"d M, Y H:i" }}</small></div>
+                            {{ comentario.contenido|linebreaksbr }}
+                        </div>
+                    </div>
+                    {% empty %}
+                        <p>Sé el primero en comentar este post.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </div>
+    
+</div>
+{% endblock %}

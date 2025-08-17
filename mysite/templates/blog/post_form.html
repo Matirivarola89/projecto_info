@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if object %}Editar Post{% else %}Crear Nuevo Post{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .card-header {
+        background-color: #4d82bc;
+        color: #ffffff;
+    }
+
+    .btn-custom {
+        background-color: #4d82bc;
+        color: #ffffff;
+        border: none;
+    }
+
+    .btn-custom:hover {
+        background-color: #9ab4ff;
+        color: #ffffff;
+    }
+  
+    
+</style>
+
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card mt-5">
+            <div class="card-header">
+                <h3 class="mb-0">{% if object %}Editar Post{% else %}Crear Nuevo Post{% endif %}</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data"> {# Añade enctype para la imagen #}
+                    {% csrf_token %}
+                    {{ form|crispy }} {# Usa crispy forms para un mejor estilo #}
+                    <button type="submit" class="btn btn-custom mt-3">
+                        {% if object %}Actualizar Post{% else %}Publicar Post{% endif %}
+                    </button>
+                    <a href="{% if object %}{% url 'blog:post_detail' pk=object.pk %}{% else %}{% url 'blog:home' %}{% endif %}" class="btn btn-secondary mt-3 ms-2">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

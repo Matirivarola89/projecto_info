@@ -1,0 +1,22 @@
+
+# Entorno virtual
+venv/
+env/
+ENV/
+*.env
+
+# Archivos de configuración local
+*.sqlite3
+db.sqlite3
+*.log
+
+
+
+# IDEs y editores
+.vscode/
+.idea/
+*.swp
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
